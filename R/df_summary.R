@@ -1,13 +1,13 @@
 #' @title df_summary
 #' @description A comprehensive description of a data frame
 #' @param df a data frame
-#' @param digits – number of decimal digits for statistics, Default: 2
-#' @return the data data frame invisibly (so that it can be used in a pipeline)
+#' @param digits number of decimal digits for statistics, Default: 2
+#' @return the data frame invisibly (so that it can be used in a pipeline)
 #' @details prints a comprehensive description of a data frame via several tables,
 #' a general summary table and tables that provide a breakdown of quantitative and categorical variables
 #' @examples
 #' data<-data.frame("height"=c(4,5,3,2, 100), 'weight'=c(39,88,NA,15, -2),"names"=c('Bill',"Dean", "Sam", NA, "Jane"), 'race'=c('b','w','w','o', 'b'))
-#' df_summary(mtcars)
+#' df_summary(data)
 #' @rdname df_summary
 #' @import dplyr
 #' @import readr
@@ -80,7 +80,7 @@ df_summary <- function(df, digits = 2){
           table_c<-table2%>%
             na.omit()%>%
             group_by(.dots=categorical[i])%>%
-            summarise(variable=categorical[i], n=n())%>%
+            summarise(variable=categorical[i], n=sum(!is.na((x))))%>%
             mutate(pct=round(n/sum(n), digits=digits))
 
           colnames(table_c)<-c("level","variable",'n', 'pct')
@@ -102,7 +102,7 @@ df_summary <- function(df, digits = 2){
       }
     }
     if (nrow(ndf)>0){
-      cat("\nQuatitative Variables\n",
+      cat("\nQuantitative Variables\n",
           "====================================================\n", sep="")
       print (data.frame(ndf))
     }
